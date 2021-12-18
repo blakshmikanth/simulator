@@ -11,6 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Simulator.Engine.Directory;
+using Simulator.Engine.Hubs;
+using Simulator.Engine.Services;
 
 namespace Simulator.Engine
 {
@@ -26,6 +29,32 @@ namespace Simulator.Engine
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+            });
+            
+            services.AddSignalR();
+            services.AddSingleton<IMessageProcessor, MessageProcessor>();
+            
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ClientPermission", policy =>
+                {
+                    policy.AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .WithOrigins("http://localhost:3000")
+                        .AllowCredentials();
+                });
+            });
+
+            services.AddSingleton<IStore, Store>();
+            
+            services.AddSingleton<IProcessor, AkkaService>();
+            services.AddHostedService<AkkaService>(sp => (AkkaService) sp.GetRequiredService<IProcessor>());
+
+            services.AddTransient<Seeder>();
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -34,8 +63,10 @@ namespace Simulator.Engine
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, Seeder seeder)
         {
+            seeder.SeedAsync().Wait();
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -46,10 +77,16 @@ namespace Simulator.Engine
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseCors("ClientPermission");
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<MessageHub>("/hubs/message");
+            });
         }
     }
 }
