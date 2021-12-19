@@ -43,6 +43,13 @@ namespace Simulator.Engine.Controllers
             SystemActors.Agents.Tell(AgentsActor.CreateAgentStateChange(message));
             return Accepted();
         }
+
+        [HttpGet("latest")]
+        public IActionResult GetLatestStates()
+        {
+            SystemActors.Agents.Tell(AgentsActor.CreateRequestCurrentState());
+            return Accepted();
+        }
         
     }
 }

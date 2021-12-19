@@ -12,8 +12,9 @@ const Agents = ({ agents }: AgentsProps) => {
   });
 
   return (
-    <div className="bg-white col-sm-6 px-2">
-      <div className="border border-1">
+    <div className="bg-white col-sm-12 px-2">
+      <h3 className="my-2">Agents</h3>
+      <div className="border border-0">
         <table className="table table-striped>">
           <thead>
             <tr>

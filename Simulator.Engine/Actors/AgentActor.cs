@@ -1,6 +1,7 @@
 using Akka.Actor;
 using Microsoft.Extensions.Logging;
 using Simulator.Engine.Contracts;
+using Simulator.Engine.Contracts.Messages;
 using Simulator.Engine.Directory;
 using Simulator.Engine.Services;
 
@@ -22,6 +23,7 @@ namespace Simulator.Engine.Actors
             _logger = logger;
             Receive<EventAgentCreated>(EventAgentCreatedHandler);
             Receive<RequestAgentStateChange>(RequestAgentStateChangeHandler);
+            Receive<RequestCurrentState>(RequestCurrentStateHandler);
         }
         
         private void EventAgentCreatedHandler(EventAgentCreated message)
@@ -37,6 +39,15 @@ namespace Simulator.Engine.Actors
         private void RequestAgentStateChangeHandler(RequestAgentStateChange message)
         {
             State = message.State;
+            _logActor.Tell(LoggerActor.CreateEventAgentStateChanged(Id, State));
+        }
+
+        /// <summary>
+        /// Send current state notification to the clients
+        /// </summary>
+        /// <param name="message"></param>
+        private void RequestCurrentStateHandler(RequestCurrentState message)
+        {
             _logActor.Tell(LoggerActor.CreateEventAgentStateChanged(Id, State));
         }
         

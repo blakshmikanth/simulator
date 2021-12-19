@@ -4,6 +4,7 @@ import { LogMessage } from "./types";
 
 type MessagesProps = {
   messages: LogMessage[];
+  clear: () => void;
 };
 
 const Messages = (props: MessagesProps) => {
@@ -12,8 +13,14 @@ const Messages = (props: MessagesProps) => {
   });
 
   return (
-    <div className="bg-light col-sm-6">
-      <div className="border border-0">{messages}</div>
+    <div className="col-sm-12" style={{ minHeight: "300px" }}>
+      <div className="d-flex justify-content-between align-items center my-3">
+        <h3>Messages</h3>
+        <button className="btn btn-light me-3 btn-sm" onClick={props.clear}>
+          Clear messages
+        </button>
+      </div>
+      <div className="bg-light border border-0 pt-2">{messages}</div>
     </div>
   );
 };

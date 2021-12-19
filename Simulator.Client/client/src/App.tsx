@@ -33,11 +33,17 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    const getStates = async () => {
+      // Get latest agent states
+      await fetch("https://localhost:5001/api/agents/latest");
+    };
+
     if (connection) {
       connection
         .start()
         .then(() => {
-          console.log("Connected to hub");
+          console.log("Connected to hub. Getting latest agent states...");
+          getStates();
 
           // subscribe to the "ReceiveMessage" event
           connection.on("ReceiveMessage", (message: LogMessage) => {
@@ -84,16 +90,11 @@ const App = () => {
 
   return (
     <>
-      <div className="d-flex justify-content-between align-items-center my-3">
-        <h3 className="my-2">Messages</h3>
-        <button className="btn btn-primary me-3 btn-sm" onClick={handleClear}>
-          Clear
-        </button>
-      </div>
+      <div className="d-flex justify-content-between align-items-center my-3"></div>
       <div className="container-fluid">
         <div className="row">
           <Agents agents={agents} />
-          <Messages messages={messages} />
+          <Messages messages={messages} clear={handleClear} />
         </div>
       </div>
     </>

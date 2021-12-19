@@ -1,8 +1,6 @@
-using System.Reflection;
-
-namespace Simulator.Engine.Contracts
+namespace Processor.Resources
 {
-    public class EventAgentCreated
+    public class Agent
     {
         public string Id { get; set; }
         public string FirstName { get; set; }

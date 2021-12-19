@@ -9,7 +9,14 @@ export type AgentResource = {
   firstName: string;
   lastName: string;
   extension: string;
-  state: AgentStateEnum
+  state: AgentStateEnum;
+};
+
+export type RequestAgentStateChange = {
+  agentId: string;
+  state: AgentStateEnum;
+  requestId: string;
+  timestamp: number;
 };
 
 export type EventAgentStateChanged = {

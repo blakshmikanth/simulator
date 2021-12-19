@@ -2,11 +2,6 @@ using System.Collections.Generic;
 
 namespace Simulator.Engine.Directory
 {
-    public interface IStore
-    {
-        public IList<AgentResource> Agents { get;  }
-    }
-    
     public class Store: IStore
     {
         public Store()
@@ -20,26 +15,5 @@ namespace Simulator.Engine.Directory
         }
         
         public IList<AgentResource> Agents { get;  }
-    }
-
-    public class AgentResource
-    {
-        public AgentResource()
-        {
-            
-        }
-
-        public AgentResource(string id, string firstName, string lastName, string extension)
-        {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            Extension = extension;
-        }
-        
-        public string Id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Extension { get; set; }
     }
 }

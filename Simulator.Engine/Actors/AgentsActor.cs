@@ -20,6 +20,7 @@ namespace Simulator.Engine.Actors
             _logger = logger;
             Receive<EventAgentCreated>(EventAgentCreatedHandler);
             Receive<RequestAgentStateChange>(RequestAgentStateChangeHandler);
+            Receive<RequestCurrentState>(RequestCurrentStateHandler);
         }
 
         private void EventAgentCreatedHandler(EventAgentCreated message)
@@ -47,7 +48,15 @@ namespace Simulator.Engine.Actors
             
             // Forward the message to the agent to change status
             _agents[message.AgentId].Forward(message);
-            
+        }
+
+        // To get current state for all agents
+        private void RequestCurrentStateHandler(RequestCurrentState message)
+        {
+            foreach (var agentRef in _agents.Values)
+            {
+                agentRef.Forward(message);
+            }
         }
    
         protected override void Unhandled(object message)
@@ -70,5 +79,7 @@ namespace Simulator.Engine.Actors
         /// <param name="message"><see cref="RequestAgentStateChange"/></param>
         /// <returns></returns>
         public static RequestAgentStateChange CreateAgentStateChange(RequestAgentStateChange message) => message;
+
+        public static RequestCurrentState CreateRequestCurrentState() => new RequestCurrentState();
     }
 }
